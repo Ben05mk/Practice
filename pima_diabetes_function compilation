@@ -87,5 +87,33 @@ data.loc[(data['Age']<=30) & (data['Glucose']<=120),'N1']=1
 #N1인 컬럼 새로 만들어서 해당 조건 맞는 애들은 1로 값 변경
 
 
+def barplot(var_select, sub) :
+    tmp1 = data[(data['Outcome'] != 0)]#diabetes
+    tmp2 = data[(data['Outcome'] == 0)]
+    tmp3 = pd.DataFrame(pd.crosstab(data[var_select],data['Outcome']) )
+    #pd.crosstab-> groupby처럼 outcome, var_select의 항목별로 묶어줌
+    tmp3.loc[:,'% diabetic'] = tmp3[1] / (tmp3[1] + tmp3[0]) * 100
+    #crosstab인덱싱-> 행의 좌표, 열의 좌표 순으로 인덱싱 할 수 있음
 
+
+    color=['lightskyblue','gold' ]
+
+    fig, ax=plt.subplots(figsize=(8,8))
+    
+    sns.countplot(data=data,
+                  x=var_select,
+                  hue='Outcome',  # 0과 1에 따라 막대가 알아서 쪼개집니다.
+                  palette=color,
+                  ax=ax)
+
+    
+    sns.lineplot(x=tmp3.index,
+                 y=tmp3['% diabetic'],
+                 color='black',
+                 ax=ax,
+                 label='%diabetic')
+    sub_mod=sub[1:-2]
+    plt.title(f'{var_select}: {sub_mod}')
+    plt.legend()
+    plt.show()
 
