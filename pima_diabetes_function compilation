@@ -86,7 +86,7 @@ data.loc[:,'N1']=0
 data.loc[(data['Age']<=30) & (data['Glucose']<=120),'N1']=1
 #N1인 컬럼 새로 만들어서 해당 조건 맞는 애들은 1로 값 변경
 
-
+#특정변수에 따른 정상인과 당뇨환자 수 및 비율 비교 가능 (막대그래프&선그래프)
 def barplot(var_select, sub) :
     tmp1 = data[(data['Outcome'] != 0)]#diabetes
     tmp2 = data[(data['Outcome'] == 0)]
@@ -102,7 +102,7 @@ def barplot(var_select, sub) :
     
     sns.countplot(data=data,
                   x=var_select,
-                  hue='Outcome',  # 0과 1에 따라 막대가 알아서 쪼개집니다.
+                  hue='Outcome',  
                   palette=color,
                   ax=ax)
 
@@ -115,5 +115,49 @@ def barplot(var_select, sub) :
     sub_mod=sub[1:-2]
     plt.title(f'{var_select}: {sub_mod}')
     plt.legend()
+    plt.show()
+
+
+#특정 변수에 따른 정상인(Outcome=0)과 당뇨병 환자(Outcome=1)의 비율을 좌우 파이 차트로 시각화하는 함수
+def pie_plot(var_select, sub):
+
+    D = data[data['Outcome'] != 0]
+    H = data[data['Outcome'] == 0]
+    
+    total_healthy = len(H)
+    total_diabetic = len(D)
+    
+    fig, axes = plt.subplots(1, 2, figsize=(14, 6))
+    
+
+    colors = sns.color_palette('pastel', n_colors=len(data[var_select].unique()))
+    
+    # 정상인 그래프 (Healthy, Outcome = 0)
+    counts_h = H[var_select].value_counts()
+    axes[0].pie(
+        counts_h.values, 
+        labels=counts_h.index, 
+        autopct='%1.1f%%', 
+        startangle=90, 
+        colors=colors,
+        wedgeprops=dict(width=0.4, edgecolor='w') 
+    )
+    axes[0].set_title(f"Healthy (Total: {total_healthy})\n{sub}", fontsize=13, fontweight='bold')
+    
+    # 당뇨 환자 그래프 (Diabetic, Outcome = 1)
+    counts_d = D[var_select].value_counts()
+    axes[1].pie(
+        counts_d.values, 
+        labels=counts_d.index, 
+        autopct='%1.1f%%', 
+        startangle=90, 
+        colors=colors,
+        wedgeprops=dict(width=0.4, edgecolor='w') 
+    )
+    axes[1].set_title(f"Diabetic (Total: {total_diabetic})\n{sub}", fontsize=13, fontweight='bold')
+    
+
+    plt.suptitle(f"'{var_select}' Ratio Comparison by Outcome", fontsize=16, y=1.03, fontweight='bold')
+    plt.tight_layout()
     plt.show()
 
