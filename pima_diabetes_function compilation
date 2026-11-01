@@ -36,19 +36,22 @@ def missing_plot(dataset,key):
 #각 컬럼의 분포를 히스토그램으로 나타낸 것
 def plot_distribution(data_select, size_bin) :
     # 2 datasets
-    tmp1 = D[data_select]
-    tmp2 = H[data_select]
+    
+    tmp1 = data[data.Outcome!=0][data_select]
+    tmp2 = data[data.Outcome==0][data_select]
     hist_data = [tmp1, tmp2]
 
     group_labels = ['diabetic', 'healthy']
-    colors = ['#FFD700', '#7EC0EE']
+
+    colors=['gold','blue']
 
     plt.figure(figsize=(8,8))
-    for data, label in zip(hist_data, group_labels):
-      sns.histplot(data,label=label, bins=size_bin, kde=True, alpha=0.5)
+    for subset_data, label, color in zip(hist_data, group_labels, colors):
+      sns.histplot(subset_data,label=label, bins=size_bin, kde=True, alpha=0.5,color=color)
     #sns 쓸 거면 zip 써야 함
     plt.legend(loc='upper right')
     plt.show()
+
 #feature 2개를 같은 그래프에서 산점도로 나타냄--> 겹치는 부분 찾기 쉬움
 def plot_feat1_feat2(feat1, feat2) :
     D = data[(data['Outcome'] != 0)]
